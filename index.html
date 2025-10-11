@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>離職倒數計時器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 設定畫面 -->
+    <div id="setting-view" class="view-container">
+        <div class="setting-card">
+            <h1 class="main-title">摸著良心問自己，你再產生幾次想離職的念頭，會真的離開</h1>
+            <div class="input-group">
+                <label for="target-input">次數 (請輸入大於等於 1 的數字)</label>
+                <input type="number" id="target-input" min="1" placeholder="請輸入目標次數">
+            </div>
+            <button id="start-btn" class="primary-btn">開始倒數</button>
+        </div>
+    </div>
+
+    <!-- 倒數畫面 -->
+    <div id="countdown-view" class="view-container hidden">
+        <div class="countdown-card">
+            <!-- 進度顯示 -->
+            <div class="progress-section">
+                <div id="progress-text" class="progress-text">進度: 0 / 0</div>
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill"></div>
+                </div>
+            </div>
+
+            <!-- 念頭輸入區域 -->
+            <div class="thought-input-section">
+                <textarea id="thought-input" placeholder="在這裡寫下你的離職念頭..." rows="4"></textarea>
+                <button id="submit-thought-btn" class="primary-btn">我又想離職了 (+1)</button>
+            </div>
+
+            <!-- 控制按鈕 -->
+            <div class="control-buttons">
+                <button id="reset-btn" class="secondary-btn">重設目標</button>
+            </div>
+
+            <!-- 念頭回顧 -->
+            <div class="thoughts-review-section">
+                <h2 class="section-title">我的離職念頭回顧</h2>
+                <ul id="thoughts-list-container" class="thoughts-list">
+                    <!-- 念頭項目將動態插入這裡 -->
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- 笑話彈出視窗 -->
+    <div id="joke-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>辛苦了，來個笑話吧！</h3>
+            </div>
+            <div class="modal-body">
+                <p id="joke-text"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="continue-btn" class="primary-btn">繼續當社畜</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 慶祝完成彈出視窗 -->
+    <div id="celebration-modal" class="modal hidden">
+        <div class="modal-content celebration-content">
+            <div class="modal-header">
+                <h2>🎉 恭喜你！ 🎉</h2>
+            </div>
+            <div class="modal-body">
+                <p class="celebration-text">明天約主管去 801 吧！你自由了！</p>
+            </div>
+            <div class="modal-footer">
+                <button id="review-btn" class="secondary-btn">回顧離職原因</button>
+                <button id="restart-btn" class="primary-btn">離開</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 回顧離職原因彈出視窗 -->
+    <div id="review-modal" class="modal hidden">
+        <div class="modal-content review-content">
+            <div class="modal-header">
+                <h2>📝 離職念頭回顧</h2>
+            </div>
+            <div class="modal-body">
+                <div id="review-thoughts-container" class="review-thoughts-list">
+                    <!-- 回顧內容將動態插入這裡 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="export-txt-btn" class="secondary-btn">輸出文字檔</button>
+                <button id="back-to-celebration-btn" class="primary-btn">返回</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
