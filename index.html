@@ -9,6 +9,42 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
+    <!-- 使用者狀態區 -->
+    <div id="user-status" class="user-status">
+        <button id="auth-btn" class="auth-btn">登入 / 註冊</button>
+        <div id="user-info" class="user-info hidden">
+            <span id="user-email"></span>
+            <button id="logout-btn" class="logout-btn">登出</button>
+        </div>
+    </div>
+
+    <!-- 認證彈出視窗 -->
+    <div id="auth-modal" class="modal hidden">
+        <div class="modal-content auth-modal-content">
+            <div class="modal-header">
+                <h3>使用者認證</h3>
+                <button id="close-auth-modal-btn" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-form">
+                    <div class="input-group">
+                        <label for="email-input">電子郵件</label>
+                        <input type="email" id="email-input" placeholder="請輸入您的電子郵件">
+                    </div>
+                    <div class="input-group">
+                        <label for="password-input">密碼</label>
+                        <input type="password" id="password-input" placeholder="請輸入您的密碼">
+                    </div>
+                    <div id="auth-error" class="auth-error"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button id="login-btn" class="primary-btn">登入</button>
+                <button id="signup-btn" class="secondary-btn">註冊</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 設定畫面 -->
     <div id="setting-view" class="view-container">
         <div class="setting-card">
