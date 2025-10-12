@@ -211,7 +211,7 @@ function exportToTxt() {
     }
     
     // 建立文字內容
-    let txtContent = '離職倒數計時器 - 離職念頭回顧\n';
+    let txtContent = '離職倒數器 - 離職念頭回顧\n';
     txtContent += '='.repeat(50) + '\n\n';
     txtContent += `目標次數: ${targetCount}\n`;
     txtContent += `實際次數: ${currentCount}\n`;
@@ -225,7 +225,7 @@ function exportToTxt() {
     });
     
     txtContent += '\n' + '='.repeat(50) + '\n';
-    txtContent += '感謝使用離職倒數計時器！\n';
+    txtContent += '感謝使用離職倒數器！\n';
     txtContent += '希望這些記錄能幫助你做出更好的決定。';
     
     // 建立並下載檔案
