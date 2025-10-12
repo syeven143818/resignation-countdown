@@ -51,14 +51,57 @@ const reviewThoughtsContainer = document.getElementById('review-thoughts-contain
 const backToCelebrationBtn = document.getElementById('back-to-celebration-btn');
 const exportTxtBtn = document.getElementById('export-txt-btn');
 
+// 認證相關 DOM 元素
+const userStatus = document.getElementById('user-status');
+const authBtn = document.getElementById('auth-btn');
+const userInfo = document.getElementById('user-info');
+const userEmail = document.getElementById('user-email');
+const logoutBtn = document.getElementById('logout-btn');
+const authModal = document.getElementById('auth-modal');
+const emailInput = document.getElementById('email-input');
+const passwordInput = document.getElementById('password-input');
+const loginBtn = document.getElementById('login-btn');
+const signupBtn = document.getElementById('signup-btn');
+const closeAuthModalBtn = document.getElementById('close-auth-modal-btn');
+const authError = document.getElementById('auth-error');
+
 // 應用程式狀態
 let targetCount = 0;
 let currentCount = 0;
 let thoughtsList = [];
 
-// 初始化應用程式
-function initApp() {
-    // 檢查 localStorage 中的 targetCount
+// 更新使用者 UI
+function updateUserUI(user) {
+    if (user) {
+        // 使用者已登入
+        authBtn.classList.add('hidden');
+        userInfo.classList.remove('hidden');
+        userEmail.textContent = user.email;
+        logoutBtn.classList.remove('hidden');
+        
+        // 隱藏主要畫面，等待資料載入
+        settingView.classList.add('hidden');
+        countdownView.classList.add('hidden');
+        
+        // 從 Supabase 載入使用者資料
+        loadDataFromSupabase(user);
+    } else {
+        // 使用者已登出
+        authBtn.classList.remove('hidden');
+        userInfo.classList.add('hidden');
+        
+        // 清空全域變數
+        targetCount = 0;
+        currentCount = 0;
+        thoughtsList = [];
+        
+        // 顯示適當的畫面（使用 localStorage）
+        showAppropriateView();
+    }
+}
+
+// 顯示適當的畫面
+function showAppropriateView() {
     const savedTargetCount = localStorage.getItem('targetCount');
     
     if (savedTargetCount === null) {
@@ -69,6 +112,136 @@ function initApp() {
         loadDataFromStorage();
         showCountdownView();
     }
+}
+
+// 顯示認證錯誤訊息
+function showAuthError(message, isSuccess = false) {
+    authError.textContent = message;
+    authError.className = `auth-error ${isSuccess ? 'success' : 'error'}`;
+}
+
+// 清空認證錯誤訊息
+function clearAuthError() {
+    authError.textContent = '';
+    authError.className = 'auth-error';
+}
+
+// 清空認證表單
+function clearAuthForm() {
+    emailInput.value = '';
+    passwordInput.value = '';
+    clearAuthError();
+}
+
+// 從 Supabase 載入使用者資料
+async function loadDataFromSupabase(user) {
+    try {
+        // 1. 移除了 .single()
+        const { data, error } = await supabaseClient
+            .from('profile')
+            .select('*')
+            .eq('id', user.id);
+
+        // 2. 檢查 API 是否回傳了其他類型的錯誤
+        if (error) {
+            throw error; // 拋出錯誤，讓 catch 區塊處理
+        }
+
+        // 3. 檢查回傳的 data 陣列。如果長度大於 0，代表是舊使用者
+        if (data && data.length > 0) {
+            const userProfile = data[0]; // 取出陣列中的第一個（也是唯一一個）物件
+            
+            // 檢查使用者是否已經設定過目標次數
+            if (userProfile.target_count && userProfile.target_count > 0) {
+                // 使用者已經設定過目標，載入資料並顯示倒數畫面
+                targetCount = userProfile.target_count;
+                thoughtsList = userProfile.thoughts_list || [];
+                currentCount = thoughtsList.length;
+                showCountdownView();
+            } else {
+                // 使用者沒有設定過目標，顯示設定畫面
+                targetCount = 0;
+                currentCount = 0;
+                thoughtsList = [];
+                showSettingView();
+            }
+        } else {
+            // 如果 data 是空陣列 []，代表這是新註冊的使用者，資料庫還沒有他的紀錄
+            // 這是正常情況，所以我們顯示設定畫面讓他開始
+            targetCount = 0;
+            currentCount = 0;
+            thoughtsList = [];
+            showSettingView();
+        }
+    } catch (error) {
+        console.error('Error loading data from Supabase:', error);
+        // 如果發生任何錯誤，安全起見，顯示設定畫面
+        showSettingView();
+    }
+}
+
+// 儲存資料到 Supabase
+async function saveDataToSupabase(user) {
+    try {
+        const dataToUpsert = {
+            id: user.id,
+            target_count: targetCount,
+            thoughts_list: thoughtsList,
+            updated_at: new Date().toISOString()
+        };
+
+        const { error } = await supabaseClient
+            .from('profile')
+            .upsert(dataToUpsert);
+
+        if (error) {
+            console.error('儲存到 Supabase 時發生錯誤:', error);
+            saveDataToStorage(); // 降級處理
+        }
+    } catch (error) {
+        console.error('saveDataToSupabase 函式捕捉到嚴重錯誤:', error);
+        saveDataToStorage(); // 降級處理
+    }
+}
+
+// 根據登入狀態選擇適當的儲存方式
+async function saveData() {
+
+    try {
+        const { data: { user }, error } = await supabaseClient.auth.getUser();
+
+        if (error) {
+            console.error('getUser 發生錯誤:', error);
+            saveDataToStorage(); // 降級處理
+            return;
+        }
+        
+        if (user) {
+            await saveDataToSupabase(user);
+        } else {
+            saveDataToStorage();
+        }
+    } catch (error) {
+        console.error('saveData 函式捕捉到嚴重錯誤:', error);
+        saveDataToStorage(); // 降級處理
+    }
+}
+
+// 初始化應用程式
+function initApp() {
+    // 監聽認證狀態變化
+    supabaseClient.auth.onAuthStateChange((event, session) => {
+        console.log('Auth state changed:', event, session);
+        updateUserUI(session?.user || null);
+    });
+    
+    // 檢查當前使用者
+    supabaseClient.auth.getUser().then(({ data: { user }, error }) => {
+        if (error) {
+            console.error('Error getting user:', error);
+        }
+        updateUserUI(user);
+    });
 }
 
 // 顯示設定畫面
@@ -249,7 +422,7 @@ function exportToTxt() {
 
 
 // 事件監聽器
-startBtn.addEventListener('click', () => {
+startBtn.addEventListener('click', async () => {
     const inputValue = parseInt(targetInput.value);
     
     if (isNaN(inputValue) || inputValue < 1) {
@@ -261,11 +434,11 @@ startBtn.addEventListener('click', () => {
     currentCount = 0;
     thoughtsList = [];
     
-    saveDataToStorage();
+    await saveData();
     showCountdownView();
 });
 
-submitThoughtBtn.addEventListener('click', () => {
+submitThoughtBtn.addEventListener('click', async () => {
     const thoughtContent = thoughtInput.value.trim();
     
     if (thoughtContent === '') {
@@ -299,7 +472,7 @@ submitThoughtBtn.addEventListener('click', () => {
     thoughtInput.value = '';
     
     // 儲存資料
-    saveDataToStorage();
+    await saveData();
     
     // 檢查是否達成目標
     if (currentCount >= targetCount) {
@@ -311,9 +484,26 @@ submitThoughtBtn.addEventListener('click', () => {
     }
 });
 
-resetBtn.addEventListener('click', () => {
+resetBtn.addEventListener('click', async () => {
     if (confirm('確定要重設目標嗎？這將清空所有資料！')) {
+        // 重設全域變數
+        targetCount = 0;
+        currentCount = 0;
+        thoughtsList = [];
+        
+        // 清空 localStorage
         clearStorage();
+        
+        // 如果使用者已登入，也要清空 Supabase 資料
+        try {
+            const { data: { user }, error } = await supabaseClient.auth.getUser();
+            if (user && !error) {
+                await saveDataToSupabase(user);
+            }
+        } catch (error) {
+            console.error('Error clearing Supabase data:', error);
+        }
+        
         showSettingView();
     }
 });
@@ -322,8 +512,25 @@ continueBtn.addEventListener('click', () => {
     hideJokeModal();
 });
 
-restartBtn.addEventListener('click', () => {
+restartBtn.addEventListener('click', async () => {
+    // 重設全域變數
+    targetCount = 0;
+    currentCount = 0;
+    thoughtsList = [];
+    
+    // 清空 localStorage
     clearStorage();
+    
+    // 如果使用者已登入，也要清空 Supabase 資料
+    try {
+        const { data: { user }, error } = await supabaseClient.auth.getUser();
+        if (user && !error) {
+            await saveDataToSupabase(user);
+        }
+    } catch (error) {
+        console.error('Error clearing Supabase data:', error);
+    }
+    
     hideCelebrationModal();
     showSettingView();
 });
@@ -340,6 +547,103 @@ backToCelebrationBtn.addEventListener('click', () => {
 
 exportTxtBtn.addEventListener('click', () => {
     exportToTxt();
+});
+
+// 認證相關事件監聽器
+authBtn.addEventListener('click', () => {
+    authModal.classList.remove('hidden');
+    clearAuthForm();
+});
+
+closeAuthModalBtn.addEventListener('click', () => {
+    authModal.classList.add('hidden');
+    clearAuthForm();
+});
+
+loginBtn.addEventListener('click', async () => {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    
+    if (!email || !password) {
+        showAuthError('請填寫所有欄位');
+        return;
+    }
+    
+    try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+            email,
+            password
+        });
+        
+        if (error) {
+            showAuthError(error.message);
+        } else {
+            clearAuthForm();
+            authModal.classList.add('hidden');
+            // onAuthStateChange 會自動處理 UI 更新
+        }
+    } catch (error) {
+        showAuthError('登入時發生錯誤，請稍後再試');
+        console.error('Login error:', error);
+    }
+});
+
+signupBtn.addEventListener('click', async () => {
+    const email = emailInput.value.trim();
+    const password = passwordInput.value.trim();
+    
+    if (!email || !password) {
+        showAuthError('請填寫所有欄位');
+        return;
+    }
+    
+    if (password.length < 6) {
+        showAuthError('密碼長度至少需要 6 個字元');
+        return;
+    }
+    
+    try {
+        const { data, error } = await supabaseClient.auth.signUp({
+            email,
+            password
+        });
+        
+        if (error) {
+            showAuthError(error.message);
+        } else {
+            clearAuthForm();
+            showAuthError('註冊成功！請至您的信箱收取驗證信。', true);
+            // 3 秒後關閉彈出視窗
+            setTimeout(() => {
+                authModal.classList.add('hidden');
+            }, 3000);
+        }
+    } catch (error) {
+        showAuthError('註冊時發生錯誤，請稍後再試');
+        console.error('Signup error:', error);
+    }
+});
+
+logoutBtn.addEventListener('click', async () => {
+    try {
+        const { error } = await supabaseClient.auth.signOut();
+        if (error) {
+            console.error('Logout error:', error);
+            showAuthError('登出時發生錯誤');
+        } else {
+            // 登出成功，清空全域變數
+            targetCount = 0;
+            currentCount = 0;
+            thoughtsList = [];
+            
+            // 清空 localStorage
+            clearStorage();
+        }
+        // onAuthStateChange 會自動處理 UI 更新
+    } catch (error) {
+        console.error('Logout error:', error);
+        showAuthError('登出時發生錯誤');
+    }
 });
 
 // 頁面載入時初始化應用程式
