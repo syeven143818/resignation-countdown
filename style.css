@@ -97,28 +97,36 @@ body {
     min-width: 400px;
 }
 
+.auth-modal-content .modal-header {
+    position: relative;
+}
+
 .close-btn {
     position: absolute;
     top: 15px;
     right: 20px;
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    color: #999;
+    background: #f8f9fa;
+    border: 2px solid #e1e8ed;
+    font-size: 1.8rem;
+    color: #666;
     cursor: pointer;
     padding: 0;
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
     transition: all 0.3s ease;
+    font-weight: 300;
+    line-height: 1;
 }
 
 .close-btn:hover {
-    background: #f8f9fa;
-    color: #333;
+    background: #ff6b6b;
+    color: white;
+    border-color: #ff6b6b;
+    transform: scale(1.1);
 }
 
 .auth-form {
