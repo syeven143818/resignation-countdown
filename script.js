@@ -2,7 +2,14 @@
 const SUPABASE_URL = 'https://ttsvfjjdkjlobnmuuarp.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR0c3Zmampka2psb2JubXV1YXJwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjAyMzMyODIsImV4cCI6MjA3NTgwOTI4Mn0.PkvItQ1qWdO1fAnKMuUpkB_uKA1ErAVrJ0cOD67y0G4';
 
-const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+    auth: {
+        redirectTo: window.location.origin + window.location.pathname,
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: true
+    }
+});
 
 
 // 笑話庫
