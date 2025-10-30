@@ -298,6 +298,13 @@ function updateProgress() {
     
     progressText.textContent = `進度: ${currentCount} / ${targetCount}`;
     progressFill.style.width = `${percentage}%`;
+    // 動態進度 icon
+    const icon = document.getElementById('progress-icon');
+    if (icon) {
+        // 使 icon 居中跟隨，不超邊界
+        const pct = Math.max(0, Math.min(percentage, 100));
+        icon.style.left = `calc(${pct}% )`;
+    }
 }
 
 // 渲染念頭列表
