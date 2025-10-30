@@ -445,6 +445,7 @@ body {
 }
 
 .thought-item {
+    list-style-type: none;
     background: #f8f9fa;
     border-left: 4px solid #667eea;
     padding: 20px;
