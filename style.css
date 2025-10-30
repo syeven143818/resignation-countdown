@@ -299,7 +299,7 @@ body {
 .countdown-card {
     background: white;
     border-radius: 20px;
-    padding: 40px;
+    padding: 15px;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
     max-width: 800px;
     width: 100%;
@@ -353,7 +353,7 @@ body {
 
 /* 念頭輸入區域 */
 .thought-input-section {
-    margin-bottom: 30px;
+    margin-bottom: 10px;
 }
 
 #thought-input {
@@ -377,14 +377,14 @@ body {
 }
 
 #submit-thought-btn {
-    margin-top: 15px;
+    margin-top: 5px;
     width: 100%;
 }
 
 /* 控制按鈕 */
 .control-buttons {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 5px;
 }
 
 /* 念頭回顧區域 */
@@ -439,9 +439,11 @@ body {
     transition: max-height 0.3s cubic-bezier(.87,-0.41,.19,1.38), opacity 0.22s;
 }
 .thoughts-list {
-    max-height: 700px;
+    max-height: 200px; /* 關鍵：設定為螢幕高度的 40% */
+    overflow-y: auto;   /* 關鍵：內容超出時，在此列表內部滾動 */
     opacity: 1;
     transition: max-height 0.3s cubic-bezier(.87,-0.41,.19,1.38), opacity 0.22s;
+    padding-right: 5px; /* 為內部捲軸增加一點空間 */
 }
 
 .thought-item {
