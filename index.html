@@ -85,8 +85,11 @@
 
             <!-- 念頭回顧 -->
             <div class="thoughts-review-section">
-                <h2 class="section-title">我的離職念頭回顧</h2>
-                <ul id="thoughts-list-container" class="thoughts-list">
+                <button id="toggle-thoughts-list-btn" class="section-title thoughts-toggle-btn" type="button">
+                    我的離職念頭回顧
+                    <svg id="thoughts-caret" class="caret-svg" width="22" height="22" viewBox="0 0 24 24"><polygon points="6,9 12,15 18,9" fill="#764ba2"/></svg>
+                </button>
+                <ul id="thoughts-list-container" class="thoughts-list collapsed">
                     <!-- 念頭項目將動態插入這裡 -->
                 </ul>
             </div>
@@ -115,7 +118,7 @@
                 <h2>🎉 恭喜你！ 🎉</h2>
             </div>
             <div class="modal-body">
-                <p class="celebration-text">明天約主管去 801 吧！你自由了！</p>
+                <p class="celebration-text">明天約主管去會議室吧！你自由了！</p>
             </div>
             <div class="modal-footer">
                 <button id="review-btn" class="secondary-btn">回顧離職原因</button>

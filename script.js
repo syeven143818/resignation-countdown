@@ -563,6 +563,16 @@ exportTxtBtn.addEventListener('click', () => {
     exportToTxt();
 });
 
+const thoughtsToggleBtn = document.getElementById('toggle-thoughts-list-btn');
+const thoughtsListUL = document.getElementById('thoughts-list-container');
+const thoughtsCaret = document.getElementById('thoughts-caret');
+if (thoughtsToggleBtn && thoughtsListUL && thoughtsCaret) {
+    thoughtsToggleBtn.addEventListener('click', () => {
+        const collapsed = thoughtsListUL.classList.toggle('collapsed');
+        thoughtsCaret.style.transform = collapsed ? 'rotate(0deg)' : 'rotate(180deg)';
+    });
+}
+
 // 認證相關事件監聽器
 authBtn.addEventListener('click', () => {
     authModal.classList.remove('hidden');

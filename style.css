@@ -391,6 +391,8 @@ body {
 .thoughts-review-section {
     border-top: 2px solid #e9ecef;
     padding-top: 30px;
+    transition: min-height 0.5s cubic-bezier(.4,2,.6,1.5);
+    min-height: 120px;
 }
 
 .section-title {
@@ -401,10 +403,45 @@ body {
     font-weight: 600;
 }
 
+.thoughts-toggle-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #2c3e50;
+    font-weight: 600;
+    text-align: center;
+    display: block;
+    width: 100%;
+    cursor: pointer;
+    padding: 0;
+    margin-bottom: 12px;
+    outline: none;
+}
+.caret-svg {
+    vertical-align: middle;
+    margin-left: 8px;
+    transition: transform 0.3s cubic-bezier(.4,2,.6,1.5);
+    display: inline-block;
+}
+.thoughts-list.collapsed + .caret-svg,
+.thoughts-list.collapsed ~ .caret-svg {
+    /* 無需變換 */
+}
+.thoughts-list:not(.collapsed) + .caret-svg,
+.thoughts-list:not(.collapsed) ~ .caret-svg {
+    /* 由JS控制 caret-svg 旋轉 */
+}
+.thoughts-list.collapsed {
+    max-height: 0;
+    overflow: hidden;
+    padding: 0;
+    opacity: 0.5;
+    transition: max-height 0.3s cubic-bezier(.87,-0.41,.19,1.38), opacity 0.22s;
+}
 .thoughts-list {
-    list-style: none;
-    max-height: 400px;
-    overflow-y: auto;
+    max-height: 700px;
+    opacity: 1;
+    transition: max-height 0.3s cubic-bezier(.87,-0.41,.19,1.38), opacity 0.22s;
 }
 
 .thought-item {
