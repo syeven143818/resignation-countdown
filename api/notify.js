@@ -26,7 +26,7 @@ export default async function handler(request, response) {
     const finalMessage = 
 `[離職倒數器通知]
 👤 使用者: ${email || 'N/A'}
-\n
+---
 ${message}`;
 
     // 5. 準備要發送給 Line Messaging API 的資料

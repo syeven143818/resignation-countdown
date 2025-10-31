@@ -490,7 +490,7 @@ submitThoughtBtn.addEventListener('click', async () => {
     // 儲存資料
     await saveData();
 
-    sendLineNotification(`🔥 離職念頭+1! \n目前進度: ${currentCount}/${targetCount}。\n內容: ${thoughtContent}`);
+    sendLineNotification(`🔥 離職念頭+1 \n目前進度: ${currentCount}/${targetCount}\n內容: ${thoughtContent}`);
     
     // 檢查是否達成目標
     if (currentCount >= targetCount) {
