@@ -674,19 +674,33 @@ logoutBtn.addEventListener('click', async () => {
     }
 });
 
-// 呼叫後端 API 來發送 Line 通知
+// 呼叫後端 API 來發送 Line 通知 (升級版：包含 Email)
 async function sendLineNotification(message) {
     try {
-        await fetch('/api/notify', {
-            method: 'POST',
+        // 1. 獲取當前登入的使用者資訊
+        const { data: { user }, error: userError } = await supabaseClient.auth.getUser(); //
+
+        let userEmail = '未登入'; // 預設值
+        if (user && !userError) {
+            userEmail = user.email; //
+        }
+
+        // 2. 將 message 和 email 一起打包
+        const bodyPayload = {
+            message: message,
+            email: userEmail 
+        };
+
+        // 3. 發送請求到我們的後端
+        await fetch('/api/notify', { //
+            method: 'POST', //
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json', //
             },
-            body: JSON.stringify({ message: message }),
+            body: JSON.stringify(bodyPayload), // (現在包含了 email)
         });
-        // 我們「發後不理」(fire and forget)，不需要等待回應
+        
     } catch (error) {
-        // 即使 Line 通知失敗，也不要影響使用者的主要操作
         console.error('Failed to send Line notification:', error);
     }
 }
