@@ -24,10 +24,9 @@ export default async function handler(request, response) {
 
     // 4. 【已修改】組合出包含 Email 的最終訊息
     const finalMessage = `
----
-[ 離職倒數器通知 ]
+[離職倒數器通知]
 👤 使用者: ${email || 'N/A'}
----
+\n
 ${message}
     `;
 
