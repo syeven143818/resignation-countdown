@@ -451,7 +451,7 @@ startBtn.addEventListener('click', async () => {
     await saveData();
     showCountdownView();
 
-    sendLineNotification(`🎉 新的倒數器啟動！目標：${targetCount} 次。`);
+    sendLineNotification(`🎉 新的倒數器啟動! 目標: ${targetCount} 次`);
 });
 
 submitThoughtBtn.addEventListener('click', async () => {
@@ -490,7 +490,7 @@ submitThoughtBtn.addEventListener('click', async () => {
     // 儲存資料
     await saveData();
 
-    sendLineNotification(`🔥 離職念頭+1! \n目前進度: ${currentCount}/${targetCount}。\n內容：${thoughtContent}`);
+    sendLineNotification(`🔥 離職念頭+1! \n目前進度: ${currentCount}/${targetCount}。\n內容: ${thoughtContent}`);
     
     // 檢查是否達成目標
     if (currentCount >= targetCount) {
