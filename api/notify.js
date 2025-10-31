@@ -23,12 +23,11 @@ export default async function handler(request, response) {
     }
 
     // 4. 【已修改】組合出包含 Email 的最終訊息
-    const finalMessage = `
-[離職倒數器通知]
+    const finalMessage = 
+`[離職倒數器通知]
 👤 使用者: ${email || 'N/A'}
 \n
-${message}
-    `;
+${message}`;
 
     // 5. 準備要發送給 Line Messaging API 的資料
     const lineBody = {
