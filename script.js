@@ -450,6 +450,8 @@ startBtn.addEventListener('click', async () => {
     
     await saveData();
     showCountdownView();
+
+    sendLineNotification(`🎉 新的倒數器啟動！目標：${targetCount} 次。`);
 });
 
 submitThoughtBtn.addEventListener('click', async () => {
@@ -487,6 +489,8 @@ submitThoughtBtn.addEventListener('click', async () => {
     
     // 儲存資料
     await saveData();
+
+    sendLineNotification(`🔥 離職念頭 +1！目前進度：${currentCount} / ${targetCount}。\n內容：${thoughtContent}`);
     
     // 檢查是否達成目標
     if (currentCount >= targetCount) {
@@ -669,6 +673,23 @@ logoutBtn.addEventListener('click', async () => {
         showAuthError('登出時發生錯誤');
     }
 });
+
+// 呼叫後端 API 來發送 Line 通知
+async function sendLineNotification(message) {
+    try {
+        await fetch('/api/notify', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ message: message }),
+        });
+        // 我們「發後不理」(fire and forget)，不需要等待回應
+    } catch (error) {
+        // 即使 Line 通知失敗，也不要影響使用者的主要操作
+        console.error('Failed to send Line notification:', error);
+    }
+}
 
 // 頁面載入時初始化應用程式
 document.addEventListener('DOMContentLoaded', initApp);
